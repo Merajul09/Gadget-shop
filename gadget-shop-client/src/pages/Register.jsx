@@ -1,7 +1,19 @@
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
+// import useAuth from "../hooks/useAuth";
+import { useForm } from "react-hook-form";
 
 const Register = () => {
+  // const { createUser } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   return (
     <div className="flex flex-row-reverse">
       <div className="max-w-md mx-auto my-4 p-6 rounded-lg shadow bg-base-200 w-1/2">
@@ -27,7 +39,7 @@ const Register = () => {
 
         <div className="divider">OR</div>
 
-        <form className="space-y-2">
+        <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
           <div className="form-control">
             <label htmlFor="name" className="label">
               <span className="label-text">Name</span>
@@ -37,20 +49,31 @@ const Register = () => {
               id="name"
               placeholder="Merajul Hasan"
               className="input input-bordered w-full"
+              {...register("name", { required: true })}
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm font-light">
+                Name is required
+              </p>
+            )}
           </div>
           <div className="form-control">
             <label htmlFor="email" className="label">
-              <span className="label-text">Email address</span>
+              <span className="label-text">Email</span>
             </label>
             <input
               type="email"
               id="email"
-              placeholder="example@example.com"
-              className="input input-bordered w-full"
+              placeholder="example@demo.com"
+              className="input input-bordered"
+              {...register("email", { required: true })}
             />
+            {errors.email && (
+              <span className="text-red-500 text-sm font-light">
+                Email is required
+              </span>
+            )}
           </div>
-
           <div className="flex gap-2">
             <div className="form-control">
               <label htmlFor="password" className="label flex justify-between">
@@ -61,18 +84,48 @@ const Register = () => {
                 id="password"
                 placeholder="•••••••"
                 className="input input-bordered w-full"
+                {...register("password", {
+                  required: true,
+                  minLength: 6,
+                })}
               />
+              {errors.password?.type === "required" && (
+                <p className="text-red-500 text-sm font-light">
+                  Password is required
+                </p>
+              )}
+              {errors.password?.type === "minLength" && (
+                <p className="text-red-500 text-sm font-light">
+                  Password must have at least 6 characters
+                </p>
+              )}
             </div>
             <div className="form-control">
-              <label htmlFor="password" className="label flex justify-between">
+              <label
+                htmlFor="confirmPassword"
+                className="label flex justify-between"
+              >
                 <span className="label-text">Confirm Password</span>
               </label>
               <input
                 type="password"
-                id="password"
+                id="confirmPassword"
                 placeholder="•••••••"
                 className="input input-bordered w-full"
+                {...register("confirmPassword", {
+                  required: true,
+                  validate: (value) => {
+                    if (watch("password" != value)) {
+                      return "Passwords not match";
+                    }
+                  },
+                })}
               />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm font-light">
+                  Both password must match
+                </p>
+              )}
             </div>
           </div>
 
