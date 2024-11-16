@@ -25,7 +25,7 @@ const Dropdown = () => {
         className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
       >
         <li className="mb-1">
-          <Link>Dropdown</Link>
+          <Link to="/dashboard">Dropdown</Link>
         </li>
         <li>
           <button
