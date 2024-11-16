@@ -1,6 +1,6 @@
 import { FcGoogle } from "react-icons/fc";
 // import useAuth from "../hooks/useAuth";
-
+import { Link } from "react-router-dom";
 const Login = () => {
   // const auth = useAuth();
   return (
@@ -11,9 +11,9 @@ const Login = () => {
         </h2>
         <p className="text-sm text-center mt-2 text-base-content">
           Don`t have an account?
-          <a href="#" className="text-primary ml-1 hover:underline">
+          <Link to="/register" className="text-primary ml-1 hover:underline">
             Sign up here
-          </a>
+          </Link>
         </p>
 
         <div className="my-2">
@@ -57,7 +57,7 @@ const Login = () => {
           </div>
 
           <button type="submit" className="btn btn-primary w-full">
-            Sign in
+            Login
           </button>
         </form>
       </div>
