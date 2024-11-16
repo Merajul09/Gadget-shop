@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
       setUser(currentUser);
       if (currentUser) {
         axios
-          .post(`http://localhost:5000/authentication`, {
+          .post(`${import.meta.env.VITE_API_URL}/authentication`, {
             email: currentUser.email,
           })
           .then((data) => {

@@ -2,6 +2,8 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const { CreateUser, GoogleSignIn } = useAuth();
@@ -13,8 +15,25 @@ const Register = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    CreateUser(data.email, data.password);
-    navigate("/");
+    const email = data.email;
+    const role = data.role;
+    const status = role === "buyer" ? "Approved" : "pending";
+    const wishlist = [];
+    const userData = { email, role, status, wishlist };
+    CreateUser(data.email, data.password).then(() => {
+      axios.post(`http://localhost:5000/users`, userData).then((res) => {
+        if (res.data.insertedId) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Registration successful",
+            showConfirmButton: false,
+            timer: 2500,
+          });
+          navigate("/");
+        }
+      });
+    });
   };
   const googleLogin = () => {
     GoogleSignIn().then(() => {
@@ -144,8 +163,8 @@ const Register = () => {
               className="select select-bordered w-full"
               {...register("role", { required: true })}
             >
-              <option>Buyer</option>
-              <option>Seller</option>
+              <option value="buyer">Buyer</option>
+              <option value="seller">Seller</option>
             </select>
             {errors.role && (
               <p className="text-red-500 text-sm font-light">
