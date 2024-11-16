@@ -1,6 +1,8 @@
 import { FcGoogle } from "react-icons/fc";
+// import useAuth from "../hooks/useAuth";
 
 const Login = () => {
+  // const auth = useAuth();
   return (
     <div className="flex">
       <div className="max-w-md mx-auto my-4 p-6 rounded-lg shadow bg-base-200 w-1/2">
