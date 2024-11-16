@@ -1,8 +1,25 @@
+import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-// import useAuth from "../hooks/useAuth";
-import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
-  // const auth = useAuth();
+  const { Login, GoogleSignIn } = useAuth();
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => {
+    Login(data.email, data.password);
+    navigate("/");
+  };
+  const googleLogin = () => {
+    GoogleSignIn().then(() => {
+      navigate("/");
+    });
+  };
   return (
     <div className="flex">
       <div className="max-w-md mx-auto my-4 p-6 rounded-lg shadow bg-base-200 w-1/2">
@@ -19,6 +36,7 @@ const Login = () => {
         <div className="my-2">
           <button
             type="button"
+            onClick={googleLogin}
             className="btn btn-outline btn-accent w-full gap-2"
           >
             <FcGoogle className="w-5 h-5" />
@@ -28,7 +46,7 @@ const Login = () => {
 
         <div className="divider">OR</div>
 
-        <form className="space-y-2">
+        <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
           <div className="form-control">
             <label htmlFor="email" className="label">
               <span className="label-text">Email address</span>
@@ -38,7 +56,13 @@ const Login = () => {
               id="email"
               placeholder="example@example.com"
               className="input input-bordered w-full"
+              {...register("email", { required: true })}
             />
+            {errors.email && (
+              <span className="text-red-500 text-sm font-light">
+                Email is required
+              </span>
+            )}
           </div>
 
           <div className="form-control">
@@ -53,7 +77,21 @@ const Login = () => {
               id="password"
               placeholder="•••••••"
               className="input input-bordered w-full"
+              {...register("password", {
+                required: true,
+                minLength: 6,
+              })}
             />
+            {errors.password?.type === "required" && (
+              <p className="text-red-500 text-sm font-light">
+                Password is required
+              </p>
+            )}
+            {errors.password?.type === "minLength" && (
+              <p className="text-red-500 text-sm font-light">
+                Password must have at least 6 characters
+              </p>
+            )}
           </div>
 
           <button type="submit" className="btn btn-primary w-full">

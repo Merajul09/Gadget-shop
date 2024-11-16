@@ -1,10 +1,11 @@
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
-// import useAuth from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
 
 const Register = () => {
-  // const { createUser } = useAuth();
+  const { CreateUser, GoogleSignIn } = useAuth();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -12,7 +13,13 @@ const Register = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
+    CreateUser(data.email, data.password);
+    navigate("/");
+  };
+  const googleLogin = () => {
+    GoogleSignIn().then(() => {
+      navigate("/");
+    });
   };
   return (
     <div className="flex flex-row-reverse">
@@ -29,6 +36,7 @@ const Register = () => {
 
         <div className="my-2">
           <button
+            onClick={googleLogin}
             type="button"
             className="btn btn-outline btn-accent w-full gap-2"
           >
@@ -115,7 +123,7 @@ const Register = () => {
                 {...register("confirmPassword", {
                   required: true,
                   validate: (value) => {
-                    if (watch("password" != value)) {
+                    if (watch("password") != value) {
                       return "Passwords not match";
                     }
                   },
@@ -128,7 +136,23 @@ const Register = () => {
               )}
             </div>
           </div>
-
+          <div className="form-control">
+            <label htmlFor="name" className="label">
+              <span className="label-text">Role</span>
+            </label>
+            <select
+              className="select select-bordered w-full"
+              {...register("role", { required: true })}
+            >
+              <option>Buyer</option>
+              <option>Seller</option>
+            </select>
+            {errors.role && (
+              <p className="text-red-500 text-sm font-light">
+                Role is required
+              </p>
+            )}
+          </div>
           <button type="submit" className="btn btn-primary w-full">
             Register
           </button>
