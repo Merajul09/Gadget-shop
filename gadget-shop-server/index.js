@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 // token verification
 const verifyJWT = (req, res, next) => {
-  const authorization = req.header.authorization;
+  const authorization = req.headers.authorization;
   if (!authorization) {
     return res.send({ message: "No Token" });
   }
@@ -76,6 +76,13 @@ async function run() {
         return res.send({ message: "User Already exists" });
       }
       const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // add product
+    app.post("/add-product", verifyJWT, verifySeller, async (req, res) => {
+      const product = req.body;
+      const result = await productCollection.insertOne(product);
       res.send(result);
     });
 
