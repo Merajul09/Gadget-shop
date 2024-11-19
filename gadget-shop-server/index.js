@@ -88,7 +88,7 @@ async function run() {
 
     // get product
     app.get("/all-products", async (req, res) => {
-      const { title, brand, sort, category } = req.query;
+      const { title, brand, sort, category, page = 1, limit = 6 } = req.query;
       const query = {};
       if (title) {
         query.title = { $regex: title, $options: "i" };
@@ -99,19 +99,23 @@ async function run() {
       if (brand) {
         query.brand = brand;
       }
+      const pageNumber = Number(page);
+      const limitNumber = Number(limit);
       const sortOption = sort === "asc" ? 1 : -1;
       const products = await productCollection
         .find(query)
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber)
         .sort({ price: sortOption })
         .toArray();
       const totalProducts = await productCollection.countDocuments(query);
-      const productsInfo = await productCollection
-        .find({}, { projection: { category: 1, brand: 1 } })
-        .toArray();
+      // const productsInfo = await productCollection
+      //   .find({}, { projection: { category: 1, brand: 1 } })
+      //   .toArray();
       const categories = [
-        ...new Set(productsInfo.map((product) => product.category)),
+        ...new Set(products.map((product) => product.category)),
       ];
-      const brands = [...new Set(productsInfo.map((product) => product.brand))];
+      const brands = [...new Set(products.map((product) => product.brand))];
       res.json({ products, categories, brands, totalProducts });
     });
 
