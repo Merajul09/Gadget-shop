@@ -86,6 +86,27 @@ async function run() {
       res.send(result);
     });
 
+    // get product
+    app.get("/all-products", async (req, res) => {
+      const { title, brand, sort, category } = req.query;
+      const query = {};
+      if (title) {
+        query.title = { $regex: title, $options: "i" };
+      }
+      if (category) {
+        query.category = { $regex: category, $options: "i" };
+      }
+      if (brand) {
+        query.brand = brand;
+      }
+      const sortOption = sort === "asc" ? 1 : -1;
+      const products = await productCollection
+        .find(query)
+        .sort({ price: sortOption })
+        .toArray();
+      res.json(products);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("You successfully connected to MongoDB!");
   } finally {
