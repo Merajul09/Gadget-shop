@@ -104,7 +104,15 @@ async function run() {
         .find(query)
         .sort({ price: sortOption })
         .toArray();
-      res.json(products);
+      const totalProducts = await productCollection.countDocuments(query);
+      const productsInfo = await productCollection
+        .find({}, { projection: { category: 1, brand: 1 } })
+        .toArray();
+      const categories = [
+        ...new Set(productsInfo.map((product) => product.category)),
+      ];
+      const brands = [...new Set(productsInfo.map((product) => product.brand))];
+      res.json({ products, categories, brands, totalProducts });
     });
 
     await client.db("admin").command({ ping: 1 });
