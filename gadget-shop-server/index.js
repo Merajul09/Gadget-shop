@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 
 const corsOption = {
-  origin: "http://localhost:5173/",
+  origin: "http://localhost:5173",
   optionsSuccessStatus: 200,
 };
 
@@ -16,6 +16,33 @@ const corsOption = {
 app.use(express.json());
 app.use(cors(corsOption));
 app.use(cookieParser());
+
+// token verification
+const verifyJWT = (req, res, next) => {
+  const authorization = req.header.authorization;
+  if (!authorization) {
+    return res.send({ message: "No Token" });
+  }
+  const token = authorization.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.send({ message: "Invalid token" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
+
+// verify seller
+const verifySeller = async (req, res, next) => {
+  const email = req.decoded.email;
+  const query = { email: email };
+  const user = await userCollection.findOne(query);
+  if (user?.role !== "seller") {
+    return res.send({ message: "forbidden access" });
+  }
+  next();
+};
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wov5hm5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -51,6 +78,7 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
+
     await client.db("admin").command({ ping: 1 });
     console.log("You successfully connected to MongoDB!");
   } finally {
