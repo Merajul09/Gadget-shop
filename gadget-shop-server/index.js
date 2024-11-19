@@ -7,9 +7,14 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 
+const corsOption = {
+  origin: "http://localhost:5173/",
+  optionsSuccessStatus: 200,
+};
+
 // middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOption));
 app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wov5hm5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -27,8 +32,15 @@ const productCollection = client.db("gadget-shop").collection("products");
 async function run() {
   try {
     // await client.connect();
-    // insert user
 
+    // get user
+    app.get("/user/:email", async (req, res) => {
+      const query = { email: req.params.email };
+      const user = await userCollection.findOne(query);
+      res.send(user);
+    });
+
+    // insert user
     app.post("/users", async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
