@@ -1,9 +1,14 @@
 import { HiSearch } from "react-icons/hi";
-const SearchBar = () => {
+const SearchBar = ({ handleSearch }) => {
   return (
-    <div className="w-1/4">
+    <form className="w-1/4" onSubmit={handleSearch}>
       <label className="input input-bordered flex items-center gap-2">
-        <input type="text" className="grow" placeholder="Search" />
+        <input
+          name="search"
+          type="text"
+          className="grow"
+          placeholder="Search"
+        />
         <button className="w-12 h-12">
           <HiSearch />
         </button>
@@ -20,7 +25,7 @@ const SearchBar = () => {
           />
         </svg> */}
       </label>
-    </div>
+    </form>
   );
 };
 

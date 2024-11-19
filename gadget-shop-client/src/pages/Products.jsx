@@ -8,27 +8,59 @@ import Loading from "../components/Loading";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  console.log({ products, loading });
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("asc");
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState("");
+  const [uniqueBrand, setUniqueBrand] = useState([]);
+  const [uniqueCategory, setUniqueCategory] = useState([]);
+  console.log(sort, search, brand, category);
+
   useEffect(() => {
     setLoading(true);
     const fetch = async () => {
-      axios.get(`http://localhost:5000/all-products`).then((res) => {
-        setProducts(res.data);
-        setLoading(false);
-      });
+      axios
+        .get(
+          `http://localhost:5000/all-products?title=${search}&sort=${sort}&brand=${brand}&category=${category}`
+        )
+        .then((res) => {
+          console.log(res.data);
+          setProducts(res.data.products);
+          setUniqueBrand(res.data.brands);
+          setUniqueCategory(res.data.categories);
+          setLoading(false);
+        });
     };
     fetch();
-  }, []);
+  }, [search, brand, category, sort]);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.search.value);
+    e.target.search.value = "";
+  };
+  const handleReset = () => {
+    setBrand("");
+    setCategory("");
+    setSearch("");
+    setSort("asc");
+    window.location.reload();
+  };
   return (
     <div>
       <h1 className="text-center text-3xl mt-6"> All Products</h1>
       <div className="flex justify-between">
-        <SearchBar />
-        <SortByPrice />
+        <SearchBar handleSearch={handleSearch} />
+        <SortByPrice setSort={setSort} />
       </div>
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-2 bg-gray-200">
-          <FilterBar />
+          <FilterBar
+            setBrand={setBrand}
+            setCategory={setCategory}
+            handleReset={handleReset}
+            uniqueBrand={uniqueBrand}
+            uniqueCategory={uniqueCategory}
+          />
         </div>
         <div className="col-span-10">
           {loading ? (
@@ -51,6 +83,7 @@ const Products = () => {
                       </figure>
                       <div className="card-body">
                         <h2 className="card-title">{product.title}</h2>
+                        <h2 className="card-title">{product.price}</h2>
                         <p>{product.description}</p>
                         <div className="card-actions justify-end">
                           <button className="btn btn-primary">Buy Now</button>
