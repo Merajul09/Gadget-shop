@@ -1,12 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-    import daisyui from "daisyui";
+import daisyui from "daisyui";
+import flowbite from "flowbite-react/tailwind";
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", flowbite.content()],
   theme: {
     extend: {},
   },
-  plugins: [daisyui],
-}
+  plugins: [daisyui, flowbite.plugin()],
+};

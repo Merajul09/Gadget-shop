@@ -7,7 +7,7 @@ const DashboardLayout = () => {
       <div className="col-span-2">
         <Sidebar />
       </div>
-      <div className="col-span-10">
+      <div className="col-span-10 flex items-center justify-center">
         <Outlet />
       </div>
     </div>
