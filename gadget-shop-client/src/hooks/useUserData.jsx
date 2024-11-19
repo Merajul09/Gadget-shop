@@ -7,12 +7,8 @@ const useUserData = () => {
   const [userData, setUserData] = useState({});
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const res = axios.get(`http://locathost:5000/user/${user.email}`);
-        setUserData(res.data);
-      } catch (err) {
-        console.log(err);
-      }
+      const res = await axios.get(`http://localhost:5000/user/${user.email}`);
+      setUserData(res.data);
     };
     if (user?.email && !loading) {
       fetchUserData();

@@ -11,6 +11,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import PrivateRoute from "./private/PrivateRoute";
 import Overview from "../components/dashboard/content/Overview";
 import UserProfile from "../components/dashboard/content/UserProfile";
+import AddProduct from "../components/dashboard/seller/AddProduct";
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/profile",
         element: <UserProfile />,
+      },
+      {
+        path: "/dashboard/add-product",
+        element: <AddProduct />,
       },
     ],
   },
