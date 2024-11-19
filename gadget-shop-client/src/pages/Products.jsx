@@ -4,6 +4,7 @@ import SearchBar from "../components/products/SearchBar";
 import SortByPrice from "../components/products/SortByPrice";
 import axios from "axios";
 import Loading from "../components/Loading";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,8 @@ const Products = () => {
   const [category, setCategory] = useState("");
   const [uniqueBrand, setUniqueBrand] = useState([]);
   const [uniqueCategory, setUniqueCategory] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
   console.log(sort, search, brand, category);
 
   useEffect(() => {
@@ -21,18 +24,19 @@ const Products = () => {
     const fetch = async () => {
       axios
         .get(
-          `http://localhost:5000/all-products?title=${search}&sort=${sort}&brand=${brand}&category=${category}`
+          `http://localhost:5000/all-products?title=${search}&page=${page}&limit=6&sort=${sort}&brand=${brand}&category=${category}`
         )
         .then((res) => {
           console.log(res.data);
           setProducts(res.data.products);
           setUniqueBrand(res.data.brands);
           setUniqueCategory(res.data.categories);
+          setTotalPage(Math.ceil(res.data.totalProducts / 6));
           setLoading(false);
         });
     };
     fetch();
-  }, [search, brand, category, sort]);
+  }, [search, brand, category, sort, page]);
   const handleSearch = (e) => {
     e.preventDefault();
     setSearch(e.target.search.value);
@@ -44,6 +48,12 @@ const Products = () => {
     setSearch("");
     setSort("asc");
     window.location.reload();
+  };
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPage) {
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
   return (
     <div>
@@ -96,6 +106,26 @@ const Products = () => {
             </>
           )}
         </div>
+      </div>
+      {/* pagination */}
+      <div className="flex items-center justify-center gap-3 my-4">
+        <button
+          onClick={() => handlePageChange(page - 1)}
+          className="btn"
+          disabled={page === 1}
+        >
+          <HiArrowLeft />
+        </button>
+        <p>
+          page {page} of {totalPage}
+        </p>
+        <button
+          onClick={() => handlePageChange(page + 1)}
+          className="btn"
+          disabled={page === totalPage}
+        >
+          <HiArrowRight />
+        </button>
       </div>
     </div>
   );
